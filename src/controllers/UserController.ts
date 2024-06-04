@@ -10,13 +10,23 @@ export class UserController {
     }
 
     createUser = (request: Request, response: Response) => {
-        const user = request.body
+        const { email, password, name, gender } = request.body
 
-        if (!user.name || !user.country || !user.city || !user.state || !user.email || !user.password || !user.age_of_birth) {
+        if (!email || !password || !name || !gender) {
             return response.status(400).json({ message: `Bad request! Todos os campos são obrigatórios` })
         } else {
-            this.userService.createUser(user.name, user.email, user.password, user.country, user.state, user.city, user.age_of_birth)
             return response.status(201).json({ message: `Usuário criado` })
+        }
+    }
+
+    createTodo = async (request: Request, response: Response) => {
+        const { name, id_user } = request.body
+
+        try {
+            const responseData = await this.userService.createTodo(name, id_user)
+            return response.status(201).json({ responseData })
+        } catch (error) {
+            console.error(error)
         }
     }
 
@@ -31,40 +41,38 @@ export class UserController {
         }
     }
 
-    searchUser = async (request: Request, response: Response) => {
-        const userQuery = request.query.query
+    getTodos = async (request: Request, response: Response) => {
+        const { id_user } = request.params
 
-        if (!userQuery) {
-            return response.status(400).json({ message: "Bad request! No search query provided." });
-        } else {
-            try {
-                const queryResult = await this.userService.searchUser(userQuery as string);
-
-                if (queryResult && queryResult.length > 0) {
-                    return response.status(200).json(queryResult);
-                } else if (queryResult && queryResult.length === 0) {
-                    return response.status(404).json({ message: "No users found matching the criteria." });
-                } else {
-                    return response.status(500).json({ message: "Error retrieving data." });
-                }
-            } catch (error) {
-                return response.status(500).json({ message: "Internal server error", error: error });
-            }
+        try {
+            const todos = await this.userService.getTodos(id_user);
+            return response.status(200).json(todos);
+        } catch (error) {
+            console.error(error);
+            return response.status(500).json({ message: 'Erro ao carregar todos' });
         }
     }
 
-    inviteFriend = async (request: Request, response: Response) => {
-        const { id_user1, id_user2 } = request.body
+    createTask = async (request: Request, response: Response) => {
+        const { name, id_todo } = request.body
 
-        if (!id_user1 || !id_user2) {
-            return response.status(400).json({ message: "Bad request!" });
-        } else {
-            try {
-                await this.userService.inviteFriend(id_user1, id_user2);
-                return response.status(200).json({message: "Convite enviado"});
-            } catch (error) {
-                return response.status(500).json({ message: "Internal server error", error: error });
-            }
+        try {
+            const responseData = await this.userService.createTask(name, id_todo)
+            return response.status(201).json({ responseData })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    getTasks = async (request: Request, response: Response) => {
+        const { id_todo } = request.params
+
+        try {
+            const tasks = await this.userService.getTasks(id_todo);
+            return response.status(200).json(tasks);
+        } catch (error) {
+            console.error(error);
+            return response.status(500).json({ message: 'Erro ao carregar tasks' });
         }
     }
 

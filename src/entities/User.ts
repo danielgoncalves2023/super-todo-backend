@@ -1,64 +1,38 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { randomUUID } from 'crypto'
-import Post from "./Post";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Todo } from "./Todo";
 
 @Entity('users')
-export default class User {
-    @PrimaryGeneratedColumn()
-    id_user: string;
+export class User {
+    @PrimaryGeneratedColumn('uuid')
+    id_user!: string;
 
     @Column({ nullable: false })
     name: string;
 
     @Column({ nullable: false })
-    resume: string;
+    gender: string;
 
     @Column({ nullable: false })
     avatar: string;
 
-    @Column({ nullable: false })
-    country: string;
-
-    @Column({ nullable: false })
-    state: string;
-
-    @Column({ nullable: false })
-    city: string;
-
-    @Column({ nullable: false })
-    date_of_birth: string;
-
-    @Column({ nullable: false })
+    @Column({ nullable: false, unique: true })
     email: string;
 
     @Column({ nullable: false })
     password: string;
 
-    @OneToMany(() => Post, post => post.user)
-    posts!: Post[];
+    @CreateDateColumn()
+    created_at!: Date;
 
-    @ManyToMany(() => User, user => user.friends)
-    @JoinTable()
-    sentFriendRequests!: User[];
-
-    @ManyToMany(() => User, user => user.sentFriendRequests)
-    receivedFriendRequests!: User[];
-
-    @ManyToMany(() => User, user => user.receivedFriendRequests)
-    @JoinTable()
-    friends!: User[];
+    @OneToMany(() => Todo, todo => todo.user)
+    todos?: Todo[];
 
     constructor(
-        name: string, email: string, password: string, country: string, state:string, city: string, date_of_birth: string
+        email: string, password: string, name: string, gender: string
     ){
-            this.id_user = randomUUID();
             this.name = name;
-            this.resume = 'Escreva o seu resumo aqui...';
-            this.avatar = '/images/image_avatar_default.webp';
-            this.country = country;
-            this.state = state;
-            this.city = city;
-            this.date_of_birth = date_of_birth;
+            this.gender = gender;
+            this.avatar = '/src/assets/avatar/avatar_default.png';
             this.email = email;
             this.password = password;
     }
