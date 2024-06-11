@@ -1,6 +1,4 @@
 import { AppDataSource } from "../database/index";
-import { Task } from "../entities/Task";
-import { Todo } from "../entities/Todo";
 import { User } from "../entities/User";
 import { UserRepository } from "../repositories/UserRepository"
 
@@ -17,31 +15,19 @@ export class UserService {
         return this.userRepository.createUser(email, password, name, gender)
     }
 
+    verifyEmailRegister = async (email: string) => {
+        return this.userRepository.verifyEmailRegister(email)
+    }
+
     getUserByEmailAndPassword = async (email: string, password: string): Promise<User | null> => {
         return await this.userRepository.getUserByEmailAndPassword(email, password)
     }
 
-    createTodo = async (
-        name: string, id_user: string
-    ): Promise<Todo | null> => {
-        return this.userRepository.createTodo(name, id_user)
+    changeAvatar = async (avatar_src: string, id_user: string) => {
+        return this.userRepository.changeAvatar(avatar_src, id_user)
     }
 
-    getTodos = async (id_user: string): Promise<Todo[]> => {
-        return this.userRepository.getTodos(id_user);
+    deleteUser = async (id_user: string) => {
+        return await this.userRepository.deleteUser(id_user)
     }
-
-    createTask = async (
-        name: string, id_todo: string
-    ): Promise<Todo | null> => {
-        return this.userRepository.createTodo(name, id_todo)
-    }
-
-    getTasks = async (id_todo: string): Promise<Task[]> => {
-        return this.userRepository.getTasks(id_todo);
-    }
-
-    // deleteUser = async (userID: string): Promise<any> => {
-    //     return await this.userRepository.deleteUser(userID)
-    // }
 }

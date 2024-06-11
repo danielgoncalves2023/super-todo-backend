@@ -1,32 +1,35 @@
 import { Request, Response } from 'express'
-import { UserRepository } from '../repositories/UserRepository'
 import { AppDataSource } from '../database'
+import { UserRepository } from '../repositories/UserRepository'
+import { UserService } from '../services/UserServices'
 
 export class UserController {
-    userService: UserRepository
+    userService: UserService
 
-    constructor(userService = new UserRepository(AppDataSource.manager)) {
+    constructor(userService = new UserService(new UserRepository(AppDataSource.manager))) {
         this.userService = userService
     }
 
-    createUser = (request: Request, response: Response) => {
+    createUser = async (request: Request, response: Response) => {
         const { email, password, name, gender } = request.body
 
         if (!email || !password || !name || !gender) {
             return response.status(400).json({ message: `Bad request! Todos os campos são obrigatórios` })
         } else {
-            return response.status(201).json({ message: `Usuário criado` })
+            const user = await this.userService.createUser(email, password, name, gender);
+            return response.status(201).json({ message: user })
         }
     }
 
-    createTodo = async (request: Request, response: Response) => {
-        const { name, id_user } = request.body
+    verifyEmailRegister = async (request: Request, response: Response) => {
+        const { email } = request.params
 
-        try {
-            const responseData = await this.userService.createTodo(name, id_user)
-            return response.status(201).json({ responseData })
-        } catch (error) {
-            console.error(error)
+        const verifyEmail = await this.userService.verifyEmailRegister(email);
+
+        if(verifyEmail === 'Email disponível'){
+            return response.status(200).json({ message: 'Email disponível' })
+        } else {
+            return response.status(200).json({ message: 'Email indisponível' })
         }
     }
 
@@ -41,52 +44,25 @@ export class UserController {
         }
     }
 
-    getTodos = async (request: Request, response: Response) => {
-        const { id_user } = request.params
+    changeAvatar = async (request: Request, response: Response) => {
+        const { avatar_src, id_user } = request.body
 
-        try {
-            const todos = await this.userService.getTodos(id_user);
-            return response.status(200).json(todos);
-        } catch (error) {
-            console.error(error);
-            return response.status(500).json({ message: 'Erro ao carregar todos' });
+        if (avatar_src) {
+            const user = await this.userService.changeAvatar(avatar_src, id_user);
+            return response.status(201).json({ message: user })
+        } else {
+            return response.status(400).json({ message: `Bad request!` })
         }
     }
 
-    createTask = async (request: Request, response: Response) => {
-        const { name, id_todo } = request.body
+    deleteUser = async (request: Request, response: Response) => {
+        const { id_user } = request.body
 
-        try {
-            const responseData = await this.userService.createTask(name, id_todo)
-            return response.status(201).json({ responseData })
-        } catch (error) {
-            console.error(error)
+        if (id_user) {
+            this.userService.deleteUser(id_user)
+            return response.status(201).json({ message: `Usuário deletado com sucesso.` })
+        } else {
+            return response.status(400).json({ message: `Erro: Usuário ou senha incorretos.` })
         }
     }
-
-    getTasks = async (request: Request, response: Response) => {
-        const { id_todo } = request.params
-
-        try {
-            const tasks = await this.userService.getTasks(id_todo);
-            return response.status(200).json(tasks);
-        } catch (error) {
-            console.error(error);
-            return response.status(500).json({ message: 'Erro ao carregar tasks' });
-        }
-    }
-
-    // deleteUser = async (request: Request, response: Response) => {
-    //     const userReq = request.body
-    //     const user = await this.userService.getUserById(userReq.id_user)
-
-    //     if(userReq.id_user == user?.id_user && userReq.password == user?.password){
-    //         this.userService.deleteUser(userReq.id_user)
-    //         return response.status(201).json({ message: `Usuário deletado.` })
-
-    //     } else {
-    //     return response.status(400).json({ message: `Erro: Usuário ou senha incorretos.` })
-
-    //     }
-    // }
 }

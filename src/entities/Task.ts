@@ -28,7 +28,7 @@ export class Task {
     constructor(
         name: string, todo: Todo
     ){
-            this.status = 'Parado.'
+            this.status = 'PARADA'
             this.name = name;
             this.todo = todo;
     }
