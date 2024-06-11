@@ -5,6 +5,12 @@ const userController = new UserController()
 
 export const routerUser = Router()
 
+// Middleware para definir cabeçalho CORS em todas as rotas
+routerUser.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://super-todo-frontend-one.vercel.app');
+    next();
+});
+
 // Registro de novo usuário
 routerUser.post('/register', userController.createUser)
 
