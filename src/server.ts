@@ -5,14 +5,9 @@ import { routerTodo } from "./routers/routerTodo";
 import { routerUser } from "./routers/routerUser";
 
 const server = express();
-const port = process.env.PORT || 3333;
+const port = process.env.PORT || 3000;
 
-server.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    credentials:true, 
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+server.use(cors());
 server.use(express.json());
 server.use(routerTask, routerTodo, routerUser);
 
