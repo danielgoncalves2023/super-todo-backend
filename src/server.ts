@@ -8,12 +8,13 @@ const server = express();
 const port = process.env.PORT || 3333;
 
 server.use(cors({
-    origin: 'https://super-todo-frontend-one.vercel.app',
+    origin: '*',
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials:true, 
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 server.use(express.json());
-server.use(routerUser);
+server.use(routerTask, routerTodo, routerUser);
 
 server.listen(port, () => {
     console.log(`Server running on port: ${port}`)
