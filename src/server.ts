@@ -13,7 +13,7 @@ server.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 server.use(express.json());
-server.use(routerTask, routerTodo, routerUser);
+server.use(routerUser);
 
 server.listen(port, () => {
     console.log(`Server running on port: ${port}`)
