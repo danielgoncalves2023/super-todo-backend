@@ -7,7 +7,11 @@ import { routerUser } from "./routers/routerUser";
 const server = express();
 const port = process.env.PORT || 3333;
 
-server.use(cors({}));
+server.use(cors({
+    origin: 'https://super-todo-frontend-one.vercel.app',
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 server.use(express.json());
 server.use(routerTask, routerTodo, routerUser);
 

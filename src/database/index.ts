@@ -6,10 +6,10 @@ import { Task } from "../entities/Task"
 
 export const AppDataSource = new DataSource({
     type: "sqlite",
-    database: "./src/database/db.sqlite",
+    database: "/src/database/db.sqlite",
     entities: [User, Todo, Task],
     migrations: [
-        "./src/database/migrations/*.ts"
+        "/src/database/migrations/*.ts"
     ],
 })
 
