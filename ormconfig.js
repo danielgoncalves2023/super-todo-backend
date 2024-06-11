@@ -1,13 +1,14 @@
 module.exports = {
     type: "sqlite",
-    database: "./src/database/db.sqlite",
-    host: 'localhost',
-    port: 3333,
-    entities: ['src/**/**.entity{.ts,.js}'],
-    miagrations: [
-        "./src/database/migrations"
+    database: "src/database/db.sqlite",
+    entities: [
+        "src/entities/*.ts"
+    ],
+    migrations: [
+        "src/database/migrations/*.ts"
     ],
     cli: {
-        miagrationsDir: "./src/database/migrations"
+        entitiesDir: "src/entities",
+        migrationsDir: "src/database/migrations"
     }
-}
+};
